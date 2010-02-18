@@ -7,6 +7,8 @@ from google.appengine.api import urlfetch
 
 import oauth
 import feedparser
+import urllib
+import urllib2
 
 # Google OAuth parameters
 # -----------------------
