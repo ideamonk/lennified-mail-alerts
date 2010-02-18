@@ -133,7 +133,7 @@ def get_feed(user):
                 oauth_request = oauth.OAuthRequest.from_consumer_and_token(consumer,token=token,http_url=SCOPE)
                 signature_method = oauth.OAuthSignatureMethod_HMAC_SHA1()
                 oauth_request.sign_request(signature_method, consumer,token)
-                result = urlfetch.fetch(url=SCOPE,  method=urlfetch.GET, headers=oauth_request.to_header())
+                result = urlfetch.fetch(url=SCOPE,  method=urlfetch.GET, headers=oauth_request.to_header(), deadline=10)
                 mail_feed = feedparser.parse(result.content)
 
     return mail_feed
