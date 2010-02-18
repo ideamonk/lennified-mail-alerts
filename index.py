@@ -5,7 +5,7 @@ from google.appengine.ext import db
 from google.appengine.api import users
 from google.appengine.api import urlfetch
 
-import oauth
+import oauth, atomlib
 
 # OAuth Access to gmail code borrowed from http://simplenotepad.appspot.com/text/goggle-app-engine-oauth-access-to-gmail
 
