@@ -9,6 +9,7 @@ import oauth
 import feedparser
 import urllib
 import urllib2
+from datetime import datetime
 
 # Google OAuth parameters
 # -----------------------
@@ -33,7 +34,7 @@ class OAuthToken(db.Model):
     token_secret = db.StringProperty(required=True)
     type = db.StringProperty(required=True)
     scope = db.StringProperty(required=True)
-    lastcheck = db.DateTimeProperty(required=False)
+    lastcheck = db.StringProperty(required=False)
 # -------------------------------------------------------------------
 
 
@@ -107,6 +108,49 @@ class OAuthReadyPage(webapp.RequestHandler):
 # -------------------------------------------------------------------
 
 
+# MessageDispatcher
+# ---------------------
+#   this class would handle work from the task queue
+class Dispatcher(webapp.RequestHandler):
+    def get(self):
+        user = users.User(email = self.request.get('email'))
+        atom = get_feed(user)
+        if not atom:
+            ''' Something went wrong here '''
+            self.response.out.write ('something went wrong')
+            # TODO: Log it
+        else:
+            # TEST self.response.out.write (atom)
+            # okay got the atom now operate
+
+            # get the user
+            t = OAuthToken.all()
+            t.filter("user =",user)
+            t.filter("scope =", SCOPE)
+            t.filter("type =", 'access')
+            results = t.fetch(1)
+
+            for lenny_user in results:
+                current_tstamp = datetime.strptime (atom.feed.updated, "%Y-%m-%dT%H:%M:%SZ")
+                try:
+                    last_tstamp = datetime.strptime (lenny_user.lastcheck, "%Y-%m-%dT%H:%M:%SZ")
+                except TypeError:
+                    last_tstamp = datetime.strptime ("2000-2-3T12:34:34Z", "%Y-%m-%dT%H:%M:%SZ")
+
+                if (last_tstamp < current_tstamp):
+                    # something new has come up, loop over and send em all
+                    for i in xrange(len(atom.entries)):
+                        #mail_date = atom.entries[i].updated_parsed
+                        mail_entry = atom.entries[i]
+                        mail_tstamp = datetime.strptime ("%d-%d-%dT%d:%d:%dZ" % mail_entry.published_parsed[:6], "%Y-%m-%dT%H:%M:%SZ")
+                        if (mail_tstamp > last_tstamp):
+                            self.response.out.write(mail_entry.title)
+
+                lenny_user.lastcheck = atom.feed.updated
+                lenny_user.put()
+            
+
+
 # CORE MODULE FUNCTIONS
 # =====================
 
@@ -115,7 +159,6 @@ class OAuthReadyPage(webapp.RequestHandler):
 #   fetches back a plaintext feed using feedparser
 def get_feed(user):
     mail_feed = None
-
     if (user):
         t = OAuthToken.all()
         t.filter("user =",user)

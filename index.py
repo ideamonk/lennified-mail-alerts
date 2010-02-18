@@ -40,10 +40,7 @@ class HomePage(webapp.RequestHandler):
     def get(self):
         user = users.GetCurrentUser()
         if (user):
-            mail_feed = lenny.get_feed(user)
-            if not mail_feed:
-                 self.redirect('/oauth')
-            self.response.out.write (mail_feed)
+            self.response.out.write (' Control panel ')
         else:
             self.redirect (users.create_login_url("/home"))
 
@@ -53,6 +50,7 @@ application = webapp.WSGIApplication([
     ('/home', HomePage),
     ('/oauth', lenny.OAuthPage),
     ('/oauth/token_ready', lenny.OAuthReadyPage),
+    ('/dispatch', lenny.Dispatcher)
 ], debug=True)
 
 if __name__ == '__main__':
