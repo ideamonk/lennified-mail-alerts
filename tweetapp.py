@@ -41,6 +41,7 @@ from demjson import decode as decode_json
 
 from google.appengine.api.urlfetch import fetch as urlfetch, GET, POST
 from google.appengine.ext import db
+from google.appengine.api import users
 from google.appengine.ext.webapp import RequestHandler, WSGIApplication
 
 # ------------------------------------------------------------------------------
@@ -51,22 +52,21 @@ OAUTH_APP_SETTINGS = {
 
     'twitter': {
 
-        'consumer_key': '',
-        'consumer_secret': '',
+        'consumer_key': 'ToB5iC8BvFzZVAAFlGj8g',
+        'consumer_secret': 'oxEu2wVI9VVtenc9Bf5bVLYcuBi5nVyg6DZj0jVV14',
 
         'request_token_url': 'https://twitter.com/oauth/request_token',
         'access_token_url': 'https://twitter.com/oauth/access_token',
-        'user_auth_url': 'http://twitter.com/oauth/authorize',
+        'user_auth_url': 'https://twitter.com/oauth/authorize',
 
         'default_api_prefix': 'http://twitter.com',
         'default_api_suffix': '.json',
 
         },
-
-    'google': {
-
-        'consumer_key': '',
-        'consumer_secret': '',
+    # I'm already done with googel oauth separately, though this one would've been awesome
+    'foobar:)': {
+        'consumer_key': 'lennified.appspot.com',
+        'consumer_secret': 'rDkXTo1C5k4CFMA+DNPU45kg',
 
         'request_token_url': 'https://www.google.com/accounts/OAuthGetRequestToken',
         'access_token_url': 'https://www.google.com/accounts/OAuthGetAccessToken',
@@ -122,6 +122,7 @@ class OAuthRequestToken(db.Model):
 class OAuthAccessToken(db.Model):
     """OAuth Access Token."""
 
+    user = db.UserProperty()
     service = db.StringProperty()
     specifier = db.StringProperty()
     oauth_token = db.StringProperty()
@@ -198,6 +199,7 @@ class OAuthClient(object):
         proxy_id = self.get_cookie()
 
         if proxy_id:
+            # already authed / cookie set
             return "FOO%rFF" % proxy_id
             self.expire_cookie()
 
@@ -219,7 +221,7 @@ class OAuthClient(object):
             service=self.service,
             **dict(token.split('=') for token in token_info.split('&'))
             )
-
+        
         token.put()
 
         if self.oauth_callback:
@@ -260,6 +262,9 @@ class OAuthClient(object):
                 'service =', self.service)
             db.delete(old)
 
+        # add gmail user info for linking together
+        self.token.user = users.GetCurrentUser()
+        
         self.token.put()
         self.set_cookie(key_name)
         self.handler.redirect(return_to)
@@ -406,7 +411,7 @@ def main():
 
     application = WSGIApplication([
        ('/oauth/(.*)/(.*)', OAuthHandler),
-       ('/', MainHandler)
+       #('/', MainHandler)
        ], debug=True)
 
     CGIHandler().run(application)

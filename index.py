@@ -14,6 +14,7 @@ from google.appengine.ext.webapp import template
 import os
 import helpers
 import LennyCore as lenny
+import tweetapp
 
 # GLOBAL VARS
 # -----------
@@ -50,7 +51,8 @@ application = webapp.WSGIApplication([
     ('/home', HomePage),
     ('/oauth', lenny.OAuthPage),
     ('/oauth/token_ready', lenny.OAuthReadyPage),
-    ('/dispatch', lenny.Dispatcher)
+    ('/dispatch', lenny.Dispatcher),
+    ('/oauth/(.*)/(.*)', tweetapp.OAuthHandler)
 ], debug=True)
 
 if __name__ == '__main__':
