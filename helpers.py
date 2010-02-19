@@ -11,3 +11,7 @@ def getPath(filename):
 # returns a rendered template
 def render(filename, values):
     return template.render(getPath("index.html"), values)
+
+# gets rid of ascii codec shite
+def sanitize_codec(fooDict,charset):
+    return dict([(k, v.encode(charset)) for k, v in fooDict.items()])

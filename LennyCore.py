@@ -15,6 +15,8 @@ from time import time
 from random import getrandbits
 import twitter_client
 import webbrowser
+from textwrap import wrap
+from helpers import sanitize_codec
 
 # -------------------------------------------------------------------
 # Google OAuth parameters
@@ -27,7 +29,7 @@ RESOURCE_URL = 'https://mail.google.com/mail/feed/atom'
 SCOPE = 'https://mail.google.com/mail/feed/atom'
 CONSUMER_KEY = "lennified.appspot.com"
 CONSUMER_SECRET = "rDkXTo1C5k4CFMA+DNPU45kg"
-
+TWITTER_MAX = 140
 
 
 # -------------------------------------------------------------------
@@ -144,7 +146,7 @@ class Dispatcher(webapp.RequestHandler):
                 except TypeError:
                     last_tstamp = datetime.strptime ("2000-2-3T12:34:34Z", "%Y-%m-%dT%H:%M:%SZ")
 
-                if (last_tstamp < current_tstamp or 1==1):
+                if (last_tstamp < current_tstamp):
                     # something new has come up, loop over and send em all
 
                     # Prepare a twitter oauthed client
@@ -158,16 +160,27 @@ class Dispatcher(webapp.RequestHandler):
                         t_key = entry.oauth_token
                         t_secret = entry.oauth_token_secret
                         response_client = twitter_client.TwitterOAuthClient(service_info['consumer_key'], service_info['consumer_secret'], t_key, t_secret)
+                        twitter_user = entry.specifier
                         
                     for i in xrange(len(atom.entries)):
                         # mail_date = atom.entries[i].updated_parsed
                         mail_entry = atom.entries[i]
                         mail_tstamp = datetime.strptime ("%d-%d-%dT%d:%d:%dZ" % mail_entry.published_parsed[:6], "%Y-%m-%dT%H:%M:%SZ")
-                        if (mail_tstamp > last_tstamp or 1==1):
+                        if (mail_tstamp > last_tstamp):
                             # TEST:self.response.out.write(mail_entry.title)
                             # DM this message
                             if (response_client):
-                                content = response_client.oauth_request('https://api.twitter.com/1/direct_messages/new.json', method='POST')
+                                mail_sender = wrap(mail_entry.author,20)[0]
+                                if (len(mail_sender) == 20):
+                                    mail_sender = mail_sender + ".."
+                                mail_subject = wrap(mail_entry.title, 140-len(mail_sender)-8)[0]
+                                if (len(mail_subject) == 140-len(mail_sender)-8):
+                                    mail_subject = mail_subject + ".."
+                                mail_notification = "L# " + mail_sender + " | " + mail_subject
+                                twitter_params = {'user':twitter_user, 'text':mail_notification}
+                                # get rid of ascii codec shite
+                                twitter_params = sanitize_codec(twitter_params, 'utf-8')
+                                content = response_client.oauth_request('https://api.twitter.com/1/direct_messages/new.json', twitter_params, method='POST')
                                 self.response.out.write ("%s #########" % content)
                                 
                     lenny_user.lastcheck = atom.feed.updated
