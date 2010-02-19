@@ -181,8 +181,7 @@ class Dispatcher(webapp.RequestHandler):
                                 # get rid of ascii codec shite
                                 twitter_params = sanitize_codec(twitter_params, 'utf-8')
                                 content = response_client.oauth_request('https://api.twitter.com/1/direct_messages/new.json', twitter_params, method='POST')
-                                self.response.out.write ("%s #########" % content)
-                                
+
                     lenny_user.lastcheck = atom.feed.updated
                     lenny_user.put()
 
