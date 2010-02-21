@@ -80,6 +80,7 @@ h4.GoodDog { font-size: 3em; padding:2px;}
     height:240px;
 }
 .dialog .panel { padding:10px; }
+.dialog .panel ul { padding-left:30px; }
 .dialog h2{
     background:#fff;
     -moz-border-radius: 5px;

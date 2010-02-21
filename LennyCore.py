@@ -25,7 +25,7 @@ from django.utils import simplejson
 REQUEST_TOKEN_URL = 'https://www.google.com/accounts/OAuthGetRequestToken'
 ACCESS_TOKEN_URL = 'https://www.google.com/accounts/OAuthGetAccessToken'
 AUTHORIZATION_URL = 'https://www.google.com/accounts/OAuthAuthorizeToken'
-CALLBACK_URL = 'http://lennified.appspot.com/oauth/token_ready'
+CALLBACK_URL = 'http://lenny.madetokill.com/oauth/token_ready'
 RESOURCE_URL = 'https://mail.google.com/mail/feed/atom'
 SCOPE = 'https://mail.google.com/mail/feed/atom'
 CONSUMER_KEY = "lenny.madetokill.com"

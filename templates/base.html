@@ -26,7 +26,7 @@
         {% block topmenu %}
             <ul>
                 <li class='starter'>Hello {{user_email}} !</li>
-                <li><a href='/home/logout'>logout</a></li>
+                <li><a href='{{logout_url}}'>logout</a></li>
                 <li class='ender'>&nbsp;</li>
             </ul>
         {% endblock %}
@@ -58,7 +58,7 @@
             <div class='panel'>
                 <p>
                     <img id='ideamonk' src="/static/images/ideamonk.jpg" align="left" />
-                    Hi I'm Abhishek, and I created Lenny.in. It is said necessity is the mother of invention.
+                    Hi I'm <a href="http://blog.ideamonk.in">Abhishek</a>, and I created Lenny.in. It is said necessity is the mother of invention.
                     This app isn't any milestone in innovation, but yes it was necessary, at least for me.
                 </p>
                 <br/>
@@ -66,17 +66,14 @@
                     So, it happened that while working for a certain client, I landed up in a miserable
                     chain of fixes over fixes to the work. The work eventually extended over my holidays
                     and I happened to be spending more than 10 hours of a day at college.
+                    Obviously, I needed some way to get an alert if a mail came up from the client's side.
                 </p>
-                <br/>
                 <p>
-                    Obviously I needed some way to get an alert if something came up from the client's side.
-                    <br/>
                     <strong>AppEngine -&gt; Gmail -&gt; Twitter -&gt; SMS</strong> sounded like fun, hence Lenny.in
                     <br/>
                     Thanks to OAuth, it is fairly easy for everyone to use it without giving out their passwords.
                     <br/>
-                    Have fun.
-
+                    Follow me on @<a href='http://twitter.com/ideamonk'>ideamonk</a>. Have fun.
                 </p>
             </div>
         </div>
@@ -85,7 +82,13 @@
             <h2>Lenny.in Goodies</h2>
             <div class='panel'>
                 <p>
-                    coming soon
+                    coming soon...
+                    <ul>
+                        <li>Sweet Lenny.in wallpapers</li>
+                        <li>Filtered mail alerts</li>
+                        <li>A twitter bot to control your alerts from sms</li>
+                        <li> anything I missed, let me know - ideamonk at gmai1 . c0/\/\</li>
+                    </ul>
                 </p>
             </div>
         </div>
@@ -94,7 +97,15 @@
             <h2>Thanks</h2>
             <div class='panel'>
                 <p>
-                    To one and all...
+                    <ul>
+                        <li>Leah Culver for <a href='http://github.com/leah/python-oauth'>python-oauth</a></li>
+                        <li>Mike Knapp for <a href='http://github.com/mikeknapp/AppEngine-OAuth-Library'>GAE Oauth Library</a></li>
+                        <li>Tav for <a href='http://github.com/tav/tweetapp'>tweetapp</a></li>
+                        <li>Simo Kinnunen for <a href='http://github.com/sorccu/cufon'>cufon</a></li>
+                        <li>Mark Pilgrim for <a href='http://code.google.com/p/feedparser/'>feedparser</a></li>
+                        <li>College for remaining closed for straight 5 days</li>
+                        <li>Anyone I missed out here</li>
+                    </ul>
                 </p>
             </div>
         </div>

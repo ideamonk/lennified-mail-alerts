@@ -94,30 +94,32 @@ class HomePage(webapp.RequestHandler):
             
     def showControlPanel(self):
         view={}
+        view['logout_url'] = users.create_logout_url("/")
+        view['user_email'] = users.GetCurrentUser()
+        
         view['page_title'] = 'Control Panel - Lenny.in'
         page = "control.html"
         self.response.out.write(helpers.render (page,view))
         
     def get(self, command=None):
-        if (command=='/logout'):
-            self.redirect (users.create_logout_url("/"))
-            
-        if (command=='/done'):
-            self.setSMSdone()
-            self.redirect('/home/control')
-            
-        if (command=='/control'):
-            self.showControlPanel()
-            return
-            
         user = users.GetCurrentUser()
         if (user):
+            if (command=='/done'):
+                self.setSMSdone()
+                self.redirect('/home/control')
+                return
+
+            if (command=='/control'):
+                self.showControlPanel()
+                return
+            
             # The user is already logged in, decide her fate depending on the extent to which
             # registration has been completed. -> step1, step2, control panel
             view={}
-            page="control.html"
-
             view['user_email'] = users.GetCurrentUser()
+            view['logout_url'] = users.create_logout_url("/")
+            page="control.html"
+            
             state = self.getUserState()
             
             if (state == 1):

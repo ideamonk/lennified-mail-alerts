@@ -200,7 +200,7 @@ class OAuthClient(object):
 
         if proxy_id:
             # already authed / cookie set
-            return "FOO%rFF" % proxy_id
+            # return "FOO%rFF" % proxy_id
             self.expire_cookie()
 
         return self.get_request_token()
