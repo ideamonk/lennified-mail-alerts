@@ -28,8 +28,8 @@ AUTHORIZATION_URL = 'https://www.google.com/accounts/OAuthAuthorizeToken'
 CALLBACK_URL = 'http://lennified.appspot.com/oauth/token_ready'
 RESOURCE_URL = 'https://mail.google.com/mail/feed/atom'
 SCOPE = 'https://mail.google.com/mail/feed/atom'
-CONSUMER_KEY = "lennified.appspot.com"
-CONSUMER_SECRET = "rDkXTo1C5k4CFMA+DNPU45kg"
+CONSUMER_KEY = "lenny.madetokill.com"
+CONSUMER_SECRET = "KeY6MjEa/KkuvXTz7LTjFtTE"
 TWITTER_MAX = 140
 
 
