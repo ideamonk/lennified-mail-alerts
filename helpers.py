@@ -10,7 +10,7 @@ def getPath(filename):
 
 # returns a rendered template
 def render(filename, values):
-    return template.render(getPath("index.html"), values)
+    return template.render(getPath(filename), values)
 
 # gets rid of ascii codec shite
 def sanitize_codec(fooDict,charset):

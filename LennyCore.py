@@ -17,6 +17,7 @@ import twitter_client
 import webbrowser
 from textwrap import wrap
 from helpers import sanitize_codec
+from django.utils import simplejson
 
 # -------------------------------------------------------------------
 # Google OAuth parameters
@@ -44,7 +45,7 @@ class OAuthToken(db.Model):
     type = db.StringProperty(required=True)
     scope = db.StringProperty(required=True)
     lastcheck = db.StringProperty(required=False)
-
+    email = db.StringProperty(required=False)
 
 # -------------------------------------------------------------------
 # Google OAuthPage
@@ -109,7 +110,12 @@ class OAuthReadyPage(webapp.RequestHandler):
                     oauth_token.token_secret = token.secret
                     oauth_token.type = 'access'
                     oauth_token.put()
-                    self.redirect('/')
+
+                    mail_feed = get_xml_from_token(token.key)
+                    email_username=mail_feed.split("<title>Gmail - Inbox for ",1)[1].split("</title",1)[0]
+                    oauth_token.email = email_username
+                    oauth_token.put()
+                    #self.redirect('/')
                 else:
                     self.response.out.write(result.content)
             else:
@@ -154,14 +160,13 @@ class Dispatcher(webapp.RequestHandler):
                     t = tweetapp.OAuthAccessToken.all()
                     t.filter ("user =", user)
                     tresults = t.fetch(1)
-                    response_client = None
                     
                     for entry in tresults:
                         t_key = entry.oauth_token
                         t_secret = entry.oauth_token_secret
                         response_client = twitter_client.TwitterOAuthClient(service_info['consumer_key'], service_info['consumer_secret'], t_key, t_secret)
                         twitter_user = entry.specifier
-                        
+
                     for i in xrange(len(atom.entries)):
                         # mail_date = atom.entries[i].updated_parsed
                         mail_entry = atom.entries[i]
@@ -170,6 +175,7 @@ class Dispatcher(webapp.RequestHandler):
                             # TEST:self.response.out.write(mail_entry.title)
                             # DM this message
                             if (response_client):
+                                # send a DM
                                 mail_sender = wrap(mail_entry.author,20)[0]
                                 if (len(mail_sender) == 20):
                                     mail_sender = mail_sender + ".."
@@ -182,6 +188,12 @@ class Dispatcher(webapp.RequestHandler):
                                 twitter_params = sanitize_codec(twitter_params, 'utf-8')
                                 content = response_client.oauth_request('https://api.twitter.com/1/direct_messages/new.json', twitter_params, method='POST')
 
+                                # delete the last DM to avoid cluttering
+                                
+                                old_dm_id = str(simplejson.loads(str(content))['id'])
+                                twitter_params = {'id':old_dm_id}
+                                content = response_client.oauth_request('https://api.twitter.com/1/direct_messages/destroy/' + old_dm_id + '.json', twitter_params, method='POST')
+                        
                     lenny_user.lastcheck = atom.feed.updated
                     lenny_user.put()
 
@@ -193,11 +205,11 @@ class Dispatcher(webapp.RequestHandler):
 # get_feed
 # -------------------------------------------------------------------
 #   fetches back a plaintext feed using feedparser
-def get_feed(user):
+def get_feed(email):
     mail_feed = None
     if (user):
         t = OAuthToken.all()
-        t.filter("user =",user)
+        t.filter("email =",email)
         t.filter("scope =", SCOPE)
         t.filter("type =", 'access')
         results = t.fetch(1)
@@ -214,5 +226,28 @@ def get_feed(user):
                 oauth_request.sign_request(signature_method, consumer,token)
                 result = urlfetch.fetch(url=SCOPE,  method=urlfetch.GET, headers=oauth_request.to_header(), deadline=10)
                 mail_feed = feedparser.parse(result.content)
+
+    return mail_feed
+
+def get_xml_from_token(token):
+    mail_feed = None
+    if (token):
+        t = OAuthToken.all()
+        t.filter("token_key =",token)
+        t.filter("scope =", SCOPE)
+        t.filter("type =", 'access')
+        results = t.fetch(1)
+
+        for oauth_token in results:
+            if oauth_token.token_key:
+                key = oauth_token.token_key
+                secret = oauth_token.token_secret
+                token = oauth.OAuthToken(key,secret)
+                consumer = oauth.OAuthConsumer(CONSUMER_KEY,CONSUMER_SECRET)
+                oauth_request = oauth.OAuthRequest.from_consumer_and_token(consumer,token=token,http_url=SCOPE)
+                signature_method = oauth.OAuthSignatureMethod_HMAC_SHA1()
+                oauth_request.sign_request(signature_method, consumer,token)
+                result = urlfetch.fetch(url=SCOPE,  method=urlfetch.GET, headers=oauth_request.to_header(), deadline=10)
+                mail_feed = result.content
 
     return mail_feed

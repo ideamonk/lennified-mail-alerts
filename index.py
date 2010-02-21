@@ -29,10 +29,10 @@ class WelcomePage(webapp.RequestHandler):
     def get(self):
         user = users.GetCurrentUser()
         if (user):
-            self.redirect ('/home')
+           self.redirect ('/home')
         else:
             tValues = { 'fooVal': 'foo value' }
-            self.response.out.write(helpers.render ("index.html", tValues))
+            self.response.out.write(helpers.render ("index.html",tValues))
 
 # the home page displays the nwest messages from the users inbox
 # it looks for a saved access token, and if there is not one,redirects
@@ -41,7 +41,8 @@ class HomePage(webapp.RequestHandler):
     def get(self):
         user = users.GetCurrentUser()
         if (user):
-            self.response.out.write (' Control panel ')
+            tValues={}
+            self.response.out.write(helpers.render ("control.html",tValues))
         else:
             self.redirect (users.create_login_url("/home"))
 
