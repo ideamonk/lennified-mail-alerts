@@ -12,7 +12,7 @@ import urllib
 import urllib2
 from datetime import datetime
 import tweetapp             # for twitter token structures TODO: merger / cleanup
-from time import time
+from time import time, sleep
 from random import getrandbits
 import twitter_client
 import webbrowser
@@ -140,8 +140,8 @@ class DispatchQueue(webapp.RequestHandler):
             results = t.fetch(1)
             if (results[0].enabled == 'true'):
                 # enqueue this user
-                taskqueue.add(url='/dispatch?email=' + a_user.user.email, method='GET')
-                self.response.out.write("done %s |" % a_user.user.email)
+                taskqueue.add(url='/dispatch?email=' + str(a_user.user.email()), method='GET')
+                self.response.out.write("done %s |" % str(a_user.user.email()))
                 
 # -------------------------------------------------------------------
 # MessageDispatcher
@@ -192,6 +192,7 @@ class Dispatcher(webapp.RequestHandler):
                         # mail_date = atom.entries[i].updated_parsed
                         mail_entry = atom.entries[i]
                         mail_tstamp = datetime.strptime ("%d-%d-%dT%d:%d:%dZ" % mail_entry.published_parsed[:6], "%Y-%m-%dT%H:%M:%SZ")
+                        mail_strstamp = "%d-%d-%dT%d:%d:%dZ" % mail_entry.published_parsed[:6]
                         if (mail_tstamp > last_tstamp):
                             # TEST:self.response.out.write(mail_entry.title)
                             # DM this message
@@ -210,13 +211,15 @@ class Dispatcher(webapp.RequestHandler):
                                 content = response_client.oauth_request('https://api.twitter.com/1/direct_messages/new.json', twitter_params, method='POST')
 
                                 # delete the last DM to avoid cluttering
-                                
-                                old_dm_id = str(simplejson.loads(str(content))['id'])
-                                twitter_params = {'id':old_dm_id}
-                                content = response_client.oauth_request('https://api.twitter.com/1/direct_messages/destroy/' + old_dm_id + '.json', twitter_params, method='POST')
-                        
-                    lenny_user.lastcheck = atom.feed.updated
-                    lenny_user.put()
+                                try:
+                                    old_dm_id = str(simplejson.loads(str(content))['id'])
+                                    twitter_params = {'id':old_dm_id}
+                                    content = response_client.oauth_request('https://api.twitter.com/1/direct_messages/destroy/' + old_dm_id + '.json', twitter_params, method='POST')
+                                    lenny_user.lastcheck = mail_strstamp
+                                    lenny_user.put()
+                                except:
+                                    ''' nothing to do '''
+                                sleep(0.5)
 
 
 # CORE MODULE FUNCTIONS
@@ -226,11 +229,11 @@ class Dispatcher(webapp.RequestHandler):
 # get_feed
 # -------------------------------------------------------------------
 #   fetches back a plaintext feed using feedparser
-def get_feed(email):
+def get_feed(user):
     mail_feed = None
     if (user):
         t = OAuthToken.all()
-        t.filter("email =",email)
+        t.filter("user =",user)
         t.filter("scope =", SCOPE)
         t.filter("type =", 'access')
         results = t.fetch(1)
