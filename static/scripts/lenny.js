@@ -9,4 +9,10 @@ $(document).ready( function(){
     $("body").click( function(){
             $(".dialog").fadeOut("fast");
     });
+
+    setTimeout('step_animate()',1500);
 });
+
+function step_animate(){
+    $(".step_on").stop().animate({paddingLeft:'40px'}, 1500);
+}

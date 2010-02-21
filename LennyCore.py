@@ -46,6 +46,7 @@ class OAuthToken(db.Model):
     scope = db.StringProperty(required=True)
     lastcheck = db.StringProperty(required=False)
     email = db.StringProperty(required=False)
+    step3 = db.StringProperty(required=False)
 
 # -------------------------------------------------------------------
 # Google OAuthPage
@@ -115,7 +116,7 @@ class OAuthReadyPage(webapp.RequestHandler):
                     email_username=mail_feed.split("<title>Gmail - Inbox for ",1)[1].split("</title",1)[0]
                     oauth_token.email = email_username
                     oauth_token.put()
-                    #self.redirect('/')
+                    self.redirect('/home')
                 else:
                     self.response.out.write(result.content)
             else:

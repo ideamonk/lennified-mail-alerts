@@ -1,0 +1,25 @@
+{% extends 'base.html' %}
+
+{% block title %}{{page_title}}{% endblock %}
+
+{% block content %}
+    <div class='mainpanel'>
+        <div class='steps'>
+            <img src='/static/images/lenny_step.png'/>
+            <img src='/static/images/step_1_.png' class='step_on'/>
+            <img src='/static/images/step_2_.png'/>
+            <img src='/static/images/step_3_.png'/>
+        </div>
+        <div class='steps'>
+            <h2>Step 1 - Gmail Authentication</h2>
+            <div class='step_desc'>
+                To check for new emails, Lenny needs read access to your gmail feed.
+                This is done in a safe way by using <a href="http://oauth.net/" target="_new">OAuth protocol</a> for <a href="http://code.google.com/apis/accounts/docs/OAuth.html" target="_new">Google Accounts API</a>.
+            </div>
+            <div class='continue_button'>
+                <a href='/oauth'>Continue</a>
+            </div>
+        </div>
+    </div>
+    <div style='height:100px;'>&nbsp;</div>
+{% endblock %}

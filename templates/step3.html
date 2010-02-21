@@ -1,0 +1,27 @@
+{% extends 'base.html' %}
+
+{% block title %}{{page_title}}{% endblock %}
+
+{% block content %}
+    <div class='mainpanel'>
+        <div class='steps'>
+            <img src='/static/images/lenny_step.png'/>
+            <img src='/static/images/step_1.png'/>
+            <img src='/static/images/step_2.png' class='step_on'/>
+            <img src='/static/images/step_3.png'/>
+        </div>
+        <div class='steps'>
+            <h2>Step 3 - Almost Done!</h2>
+            <div class='step_desc'>
+                Congrats! Now all you're left with is to enable SMS alerts on your twitter account.
+                Goto twitter settings -&gt; <a href='http://twitter.com/devices'>Mobile</a> for setting up.
+                <br/>
+                Read the <a href='http://help.twitter.com/forums/59008/entries/14014'>Twitter Phone FAQ</a>, <a href='http://help.twitter.com/forums/59008/entries/14589'>etc</a> for more information.
+            </div>
+            <div class='continue_button'>
+                <a href='/home/done'>Continue</a>
+            </div>
+        </div>
+    </div>
+    <div style='height:100px;'>&nbsp;</div>
+{% endblock %}

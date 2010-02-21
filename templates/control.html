@@ -1,1 +1,10 @@
- 
+{% extends 'base.html' %}
+
+{% block title %}{{page_title}}{% endblock %}
+
+{% block topmenu %}
+    <ul>
+        <li>Hello {{user_email}}</li>
+        <li><a href='/home/logout'>logout</a></li>
+    </ul>
+{% endblock %}

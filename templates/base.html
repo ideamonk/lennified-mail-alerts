@@ -1,0 +1,121 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
+<head>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+    <link rel="shortcut icon" href="/favicon.ico" type="image/x-icon"/>
+
+    <title>{% block title %}Lenny.in - lennified twitter notifications for gmail{% endblock %}</title>
+    <link rel="stylesheet" href="/static/style.css" type="text/css" />
+
+    <script type="text/javascript" src="/static/scripts/jquery-min.js"></script>
+    <script type="text/javascript" src="/static/scripts/cufon-yui.js"></script>
+    <script type="text/javascript" src="/static/fonts/GoodDog_400.font.js"></script>
+    <script type="text/javascript" src="/static/scripts/lenny.js"></script>
+    <!--[if IE 6]>
+        <script src="/static/scripts/dd_belated.js"></script>
+        <script>
+            DD_belatedPNG.fix('*');
+        </script>
+    <![endif]-->
+
+    {% block extrascripts %}{% endblock %}
+</head>
+<body>
+<div class='wrapper'>
+    <div class='topmenu'>
+        {% block topmenu %}
+            <ul>
+                <li class='starter'>Hello {{user_email}} !</li>
+                <li><a href='/home/logout'>logout</a></li>
+                <li class='ender'>&nbsp;</li>
+            </ul>
+        {% endblock %}
+    </div>
+    {% block logosmall %}
+    <div class='logosmall'>
+        <p class='GoodDog'>
+            <img align='middle' src='/static/images/lenny_smallest.png' alt='Lenny, the toy from movie Toy Story which looks like a pair of glasses' />
+            
+            Lenny.in
+        </p>
+    </div>
+    {% endblock %}
+    <div class='content'>
+    {% block content %}
+        <div class='right'>
+            {% block right %}
+            {% endblock %}
+        </div>
+        <div class='{% block border %}left{% endblock %}'>
+            {% block left %}{% endblock %}
+        </div>
+    {% endblock %}
+        {% block bodyend %}
+        <div style='height:300px;'>&nbsp;</div>
+                <!-- beginning of dialogues -->
+        <div class='dialog' id="about">
+            <h2>About Lenny.in</h2>
+            <div class='panel'>
+                <p>
+                    <img id='ideamonk' src="/static/images/ideamonk.jpg" align="left" />
+                    Hi I'm Abhishek, and I created Lenny.in. It is said necessity is the mother of invention.
+                    This app isn't any milestone in innovation, but yes it was necessary, at least for me.
+                </p>
+                <br/>
+                <p>
+                    So, it happened that while working for a certain client, I landed up in a miserable
+                    chain of fixes over fixes to the work. The work eventually extended over my holidays
+                    and I happened to be spending more than 10 hours of a day at college.
+                </p>
+                <br/>
+                <p>
+                    Obviously I needed some way to get an alert if something came up from the client's side.
+                    <br/>
+                    <strong>AppEngine -&gt; Gmail -&gt; Twitter -&gt; SMS</strong> sounded like fun, hence Lenny.in
+                    <br/>
+                    Thanks to OAuth, it is fairly easy for everyone to use it without giving out their passwords.
+                    <br/>
+                    Have fun.
+
+                </p>
+            </div>
+        </div>
+
+        <div class='dialog' id="goodies">
+            <h2>Lenny.in Goodies</h2>
+            <div class='panel'>
+                <p>
+                    coming soon
+                </p>
+            </div>
+        </div>
+
+        <div class='dialog' id="thanks">
+            <h2>Thanks</h2>
+            <div class='panel'>
+                <p>
+                    To one and all...
+                </p>
+            </div>
+        </div>
+        <!-- end of dialogues -->
+    </div>
+    <div class='footer'>
+        <ul>
+            <li>
+                <a href="javascript:showDialog('about')">about</a>
+            </li>
+            <li>
+                <a href="javascript:showDialog('goodies')">goodies</a>
+            </li>
+            <li>
+                <a href="javascript:showDialog('thanks')">thanks</a>
+            </li>
+        </ul>
+        <img src='/static/images/power2.png' />
+    </div>
+    {% endblock %}
+</div>
+</body>
+</html>

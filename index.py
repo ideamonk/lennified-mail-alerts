@@ -29,31 +29,126 @@ class WelcomePage(webapp.RequestHandler):
     def get(self):
         user = users.GetCurrentUser()
         if (user):
+            # user has already logged in
            self.redirect ('/home')
         else:
-            tValues = { 'fooVal': 'foo value' }
-            self.response.out.write(helpers.render ("index.html",tValues))
+            # The user has not logged in yet, show the landig page
+            tValues = { 'page_title': 'Lenny.in - lennified notifications for gmail' }
+            self.response.out.write(helpers.render ("homepage.html",tValues))
 
 # the home page displays the nwest messages from the users inbox
 # it looks for a saved access token, and if there is not one,redirects
 # to /oauth to begin the dance...
 class HomePage(webapp.RequestHandler):
-    def get(self):
+    def getGmailState(self):
+        ''' gives back a boolean indicating if user has completed gmail step '''
+        t = lenny.OAuthToken.all()
+        t.filter("user =",users.GetCurrentUser())
+        t.filter("scope =", lenny.SCOPE)
+        t.filter("type =", 'access')
+        results = t.fetch(1)
+        if (len(results) == 1):
+            return True
+        else:
+            return False
+
+    def getTwitterState(self):
+        ''' gives back a boolean indicating if user has completed twitter step '''
+        t = lenny.tweetapp.OAuthAccessToken.all()
+        t.filter ("user =", users.GetCurrentUser())
+        results = t.fetch(1)
+        if (len(results) == 1):
+            return True
+        else:
+            return False
+
+    def hasSeenSMS(self):
+        t = lenny.OAuthToken.all()
+        t.filter("user =",users.GetCurrentUser())
+        t.filter("scope =", lenny.SCOPE)
+        t.filter("type =", 'access')
+        results = t.fetch(1)
+        for r in results:
+            if (r.step3 == "done"):
+                return True
+        return False
+        
+    def getUserState(self):
+        ''' Gives back an integer indicating user's registration completeness '''
+        if ( not self.getGmailState() ):
+            return 1
+        if ( not self.getTwitterState() ):
+            return 2
+
+        return 3
+
+    def setSMSdone(self):
+        t = lenny.OAuthToken.all()
+        t.filter("user =",users.GetCurrentUser())
+        t.filter("scope =", lenny.SCOPE)
+        t.filter("type =", 'access')
+        results = t.fetch(1)
+        for r in results:
+            r.step3="done"
+            r.put()
+            
+    def showControlPanel(self):
+        view={}
+        view['page_title'] = 'Control Panel - Lenny.in'
+        page = "control.html"
+        self.response.out.write(helpers.render (page,view))
+        
+    def get(self, command=None):
+        if (command=='/logout'):
+            self.redirect (users.create_logout_url("/"))
+            
+        if (command=='/done'):
+            self.setSMSdone()
+            self.redirect('/home/control')
+            
+        if (command=='/control'):
+            self.showControlPanel()
+            return
+            
         user = users.GetCurrentUser()
         if (user):
-            tValues={}
-            self.response.out.write(helpers.render ("control.html",tValues))
+            # The user is already logged in, decide her fate depending on the extent to which
+            # registration has been completed. -> step1, step2, control panel
+            view={}
+            page="control.html"
+
+            view['user_email'] = users.GetCurrentUser()
+            state = self.getUserState()
+            
+            if (state == 1):
+                ''' user has not OAuthed Gmail, as her to '''
+                view['page_title'] = 'Step 1 - Gmail Authentication - Lenny.in'
+                page = "step1.html"
+
+            if (state == 2):
+                ''' user has not OAuthed Gmail, as her to '''
+                view['page_title'] = 'Step 2 - Twitter Authentication - Lenny.in'
+                page = "step2.html"
+
+            if (state == 3):
+                ''' user has not OAuthed Gmail, as her to '''
+                view['page_title'] = 'Step 2 - Twitter Authentication - Lenny.in'
+                page = "step3.html"
+
+            if (self.hasSeenSMS()):
+                self.redirect ("/home/control")
+                
+            self.response.out.write(helpers.render (page,view))
         else:
             self.redirect (users.create_login_url("/home"))
 
-
 application = webapp.WSGIApplication([
     ('/', WelcomePage),
-    ('/home', HomePage),
+    ('/home(.*)', HomePage),
     ('/oauth', lenny.OAuthPage),
     ('/oauth/token_ready', lenny.OAuthReadyPage),
     ('/dispatch', lenny.Dispatcher),
-    ('/oauth/(.*)/(.*)', tweetapp.OAuthHandler)
+    ('/oauth/(.*)/(.*)', tweetapp.OAuthHandler),
 ], debug=True)
 
 if __name__ == '__main__':

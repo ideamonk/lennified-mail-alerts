@@ -1,0 +1,49 @@
+{% extends 'base.html' %}
+
+{% block border %}left-border{% endblock %}
+
+{% block right %}
+    <div class='birdy'>
+        <h3 class='GoodDog'>Where do I start?</h3>
+        <p>
+            So what are you waiting for, just sign in with your google account.
+        </p>
+        <p class='paddify'>
+            <a href='/home'>
+                <div id="start_button">&nbsp;</div>
+            </a>
+        </p>
+    </div>
+{% endblock %}
+
+{% block left %}
+    <img  class='lennylogo' align='left' src='/static/images/lenny_smaller.png' alt='Lenny, the toy from movie Toy Story which looks like a pair of glasses' />
+
+    <div style='height:20px;'>&nbsp;</div>
+
+    <h2 class='GoodDog'>Lenny.in</h2>
+    <p class='tagline'>
+        Lennified gmail notifications on twitter
+    </p>
+
+    <div style='clear:both;'>&nbsp;</div>
+
+    <h3 class='GoodDog'>What is Lenny?</h3>
+    <p>
+        Lenny is a simple gmail notification tool.
+        If your twitter account is sms <img src='/static/images/telephone.png' align='top'/> enabled, it alerts you whenever you get a new mail <img src='/static/images/email.png' align='top'/> in your inbox.
+    </p>
+    <br/>
+    <p>
+        In the movie Toy Story, Lenny is a pair of binoculars with feet. He is talkative when he warns the toys
+        what he sees on his watch. So, now you see the co-relation!
+    </p>
+    <br/>
+    <div class='working'>
+        <img src='/static/images/working.png' />
+    </div>
+    <div style='height:20px;'>&nbsp;</div>
+{% endblock %}
+
+{% block topmenu %}{% endblock %}
+{% block logosmall %}{% endblock %}

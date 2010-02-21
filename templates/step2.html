@@ -1,0 +1,25 @@
+{% extends 'base.html' %}
+
+{% block title %}{{page_title}}{% endblock %}
+
+{% block content %}
+    <div class='mainpanel'>
+        <div class='steps'>
+            <img src='/static/images/lenny_step.png'/>
+            <img src='/static/images/step_1.png'/>
+            <img src='/static/images/step_2_.png' class='step_on'/>
+            <img src='/static/images/step_3_.png'/>
+        </div>
+        <div class='steps'>
+            <h2>Step 2 - Twitter Authentication</h2>
+            <div class='step_desc'>
+                To be able to receive alerts on twitter, you need to allow account access to Lenny.
+                Again, this is done in a safe way by using <a href="http://oauth.net/" target="_new">OAuth protocol</a> for <a href="http://apiwiki.twitter.com/OAuth-FAQ" target="_new">Twitter API</a>.
+            </div>
+            <div class='continue_button'>
+                <a href='/oauth/twitter/'>Continue</a>
+            </div>
+        </div>
+    </div>
+    <div style='height:100px;'>&nbsp;</div>
+{% endblock %}
