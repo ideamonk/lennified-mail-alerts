@@ -124,3 +124,70 @@ h4.GoodDog { font-size: 3em; padding:2px;}
 .continue_button a{ color:#fff; text-decoration:none; }
 
 .logosmall{z-index:5; top:5px; position:absolute; font-size:2em;}
+
+.monitoring {
+    width:420px;
+    height:190px;
+    margin:0px auto;
+    text-align:left;
+    background:url(/static/images/working.png) left 30px no-repeat;
+}
+.m_email, .m_twitter {
+    position:relative;
+    margin-left:30px;
+    padding:10px;
+    -webkit-border-radius:10px;
+    -moz-border-radius:10px;
+    background:#CC0000;
+    -webkit-box-shadow: 1px 1px 5px #aaa;
+    -moz-box-shadow: 1px 1px 5px #aaa;
+    display:inline-block;
+    font-weight:bold;
+    color:#ffffff;
+    text-shadow:1px 1px 1px #000;
+    clear:both;
+}
+/*  ^^ Yay, bandwidth saved (see below) */
+.m_twitter {
+    margin-left:250px;
+    background:#097DEB;
+}
+
+.steps a {text-decoration:none;}
+
+/*  thanks to http://www.oscaralexander.com/tutorials/how-to-make-sexy-buttons-with-css.html */
+.clear { /* generic container (i.e. div) for floating buttons */
+    overflow: hidden;
+    width: 100%;
+    text-align:center;
+}
+
+a.button {
+    background: transparent url('/static/images/bg_button_a.gif') no-repeat scroll top right;
+    color: #444;
+    display: block;
+    float: left;
+    font: normal 12px arial, sans-serif;
+    height: 24px;
+    margin-right: 6px;
+    padding-right: 18px; /* sliding doors padding */
+    text-decoration: none;
+}
+
+a.button span {
+    background: transparent url('/static/images/bg_button_span.gif') no-repeat;
+    display: block;
+    line-height: 14px;
+    padding: 5px 0 5px 18px;
+}
+
+a.button:active {
+    background-position: bottom right;
+    color: #000;
+    outline: none; /* hide dotted outline in Firefox */
+}
+
+a.button:active span {
+    background-position: bottom left;
+    padding: 6px 0 4px 18px; /* push text down 1px */
+}

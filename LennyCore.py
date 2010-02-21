@@ -4,6 +4,7 @@ from google.appengine.ext.webapp.util import run_wsgi_app
 from google.appengine.ext import db
 from google.appengine.api import users
 from google.appengine.api import urlfetch
+from google.appengine.api.labs import taskqueue
 
 import oauth
 import feedparser
@@ -123,6 +124,25 @@ class OAuthReadyPage(webapp.RequestHandler):
                     self.response.out.write('no go')
 
 
+# -------------------------------------------------------------------
+# DispatchQueue
+# -------------------------------------------------------------------
+#   adds all accounts for updates
+class DispatchQueue(webapp.RequestHandler):
+    def get(self):
+        # get the user
+        t = OAuthToken.all()
+        t.filter("type =", 'access')
+        user_list = t.fetch(1000)
+        for a_user in user_list:
+            t = tweetapp.OAuthAccessToken.all()
+            t.filter("user =",a_user.user)
+            results = t.fetch(1)
+            if (results[0].enabled == 'true'):
+                # enqueue this user
+                taskqueue.add(url='/dispatch?email=' + a_user.user.email, method='GET')
+                self.response.out.write("done %s |" % a_user.user.email)
+                
 # -------------------------------------------------------------------
 # MessageDispatcher
 # -------------------------------------------------------------------

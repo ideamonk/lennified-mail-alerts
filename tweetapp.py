@@ -123,6 +123,7 @@ class OAuthAccessToken(db.Model):
     """OAuth Access Token."""
 
     user = db.UserProperty()
+    enabled = db.StringProperty()
     service = db.StringProperty()
     specifier = db.StringProperty()
     oauth_token = db.StringProperty()
@@ -264,7 +265,7 @@ class OAuthClient(object):
 
         # add gmail user info for linking together
         self.token.user = users.GetCurrentUser()
-        
+        self.token.enabled = "true"
         self.token.put()
         self.set_cookie(key_name)
         self.handler.redirect(return_to)

@@ -99,7 +99,47 @@ class HomePage(webapp.RequestHandler):
         
         view['page_title'] = 'Control Panel - Lenny.in'
         page = "control.html"
+
+        t = lenny.OAuthToken.all()
+        t.filter("user =",users.GetCurrentUser())
+        t.filter("scope =", lenny.SCOPE)
+        t.filter("type =", 'access')
+        results = t.fetch(1)
+        for r in results:
+            view['monitor_email'] =r.email
+
+        t = tweetapp.OAuthAccessToken.all()
+        t.filter("user =",users.GetCurrentUser())
+        results = t.fetch(1)
+        for r in results:
+            view['monitor_twitter'] =r.specifier
+            if (r.enabled=='true'):
+                view['enable_url']='/home/control/disable'
+                view['enable_or_disable']='disable'
+            else:
+                view['enable_url']='/home/control/enable'
+                view['enable_or_disable']='enable'
+                view['disable_style'] = "background:#888;"
+            
         self.response.out.write(helpers.render (page,view))
+
+    def enableAlert(self):
+        t = tweetapp.OAuthAccessToken.all()
+        t.filter("user =",users.GetCurrentUser())
+        results = t.fetch(1)
+        for r in results:
+            r.enabled = 'true'
+            r.put()
+        self.redirect('/home/control')
+
+    def disableAlert(self):
+        t = tweetapp.OAuthAccessToken.all()
+        t.filter("user =",users.GetCurrentUser())
+        results = t.fetch(1)
+        for r in results:
+            r.enabled = 'false'
+            r.put()
+        self.redirect('/home/control')
         
     def get(self, command=None):
         user = users.GetCurrentUser()
@@ -109,7 +149,15 @@ class HomePage(webapp.RequestHandler):
                 self.redirect('/home/control')
                 return
 
-            if (command=='/control'):
+            #TODO: only if SMS
+            if ('/control' in command):
+                if ('/enable' in command):
+                    self.enableAlert()
+                    return
+                if ('/disable' in command):
+                    self.disableAlert()
+                    return
+                    
                 self.showControlPanel()
                 return
             
@@ -150,6 +198,7 @@ application = webapp.WSGIApplication([
     ('/oauth', lenny.OAuthPage),
     ('/oauth/token_ready', lenny.OAuthReadyPage),
     ('/dispatch', lenny.Dispatcher),
+    ('/dispatchall', lenny.DispatchQueue),
     ('/oauth/(.*)/(.*)', tweetapp.OAuthHandler),
 ], debug=True)
 
