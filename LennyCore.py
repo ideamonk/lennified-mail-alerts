@@ -219,12 +219,11 @@ class Dispatcher(webapp.RequestHandler):
                                     old_dm_id = str(simplejson.loads(str(content))['id'])
                                     twitter_params = {'id':old_dm_id}
                                     content = response_client.oauth_request('https://api.twitter.com/1/direct_messages/destroy/' + old_dm_id + '.json', twitter_params, method='POST')
-                                    lenny_user.lastcheck = mail_strstamp
-                                    lenny_user.put()
                                 except:
                                     ''' nothing to do '''
-                                sleep(0.5)
 
+                    lenny_user.lastcheck = atom.feed.updated
+                    lenny_user.put()
 
 # CORE MODULE FUNCTIONS
 # =====================
