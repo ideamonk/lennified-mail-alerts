@@ -140,10 +140,13 @@ class DispatchQueue(webapp.RequestHandler):
             t = tweetapp.OAuthAccessToken.all()
             t.filter("user =",a_user.user)
             results = t.fetch(1)
-            if (results[0].enabled == 'true'):
-                # enqueue this user
-                taskqueue.add(url='/dispatch?email=' + str(a_user.user.email()), method='GET')
-                self.response.out.write("done %s |" % str(a_user.user.email()))
+            try:
+                if (results[0].enabled == 'true'):
+                    # enqueue this user
+                    taskqueue.add(url='/dispatch?email=' + str(a_user.user.email()), method='GET')
+                    self.response.out.write("done %s |" % str(a_user.user.email()))
+            except IndexError:
+                ''' nothing was found on that user '''
                 
     def post(self):
         self.get()
@@ -191,6 +194,7 @@ class Dispatcher(webapp.RequestHandler):
                         t_secret = entry.oauth_token_secret
                         response_client = twitter_client.TwitterOAuthClient(service_info['consumer_key'], service_info['consumer_secret'], t_key, t_secret)
                         twitter_user = entry.specifier
+                        twitter_dm = entry.dm_store
 
                     for i in xrange(len(atom.entries)):
                         # mail_date = atom.entries[i].updated_parsed
@@ -215,12 +219,13 @@ class Dispatcher(webapp.RequestHandler):
                                 content = response_client.oauth_request('https://api.twitter.com/1/direct_messages/new.json', twitter_params, method='POST')
 
                                 # delete the last DM to avoid cluttering
-                                try:
-                                    old_dm_id = str(simplejson.loads(str(content))['id'])
-                                    twitter_params = {'id':old_dm_id}
-                                    content = response_client.oauth_request('https://api.twitter.com/1/direct_messages/destroy/' + old_dm_id + '.json', twitter_params, method='POST')
-                                except:
-                                    ''' nothing to do '''
+                                if (twitter_dm == 'false'):
+                                    try:
+                                        old_dm_id = str(simplejson.loads(str(content))['id'])
+                                        twitter_params = {'id':old_dm_id}
+                                        content = response_client.oauth_request('https://api.twitter.com/1/direct_messages/destroy/' + old_dm_id + '.json', twitter_params, method='POST')
+                                    except:
+                                        ''' nothing to do '''
 
                     lenny_user.lastcheck = atom.feed.updated
                     lenny_user.put()

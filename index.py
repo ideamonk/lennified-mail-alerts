@@ -120,7 +120,14 @@ class HomePage(webapp.RequestHandler):
                 view['enable_url']='/home/control/enable'
                 view['enable_or_disable']='enable'
                 view['disable_style'] = "background:#888;"
-            
+                
+            if (r.dm_store == None or r.dm_store == 'false'):
+                view['dm_url']='/home/control/dm_store'
+                view['save_or_dont']="preserve"
+            else:
+                view['dm_url']='/home/control/dm_destroy'
+                view['save_or_dont']="don't store"
+                
         self.response.out.write(helpers.render (page,view))
 
     def enableAlert(self):
@@ -140,6 +147,24 @@ class HomePage(webapp.RequestHandler):
             r.enabled = 'false'
             r.put()
         self.redirect('/home/control')
+
+    def enableDMStore(self):
+        t = tweetapp.OAuthAccessToken.all()
+        t.filter("user =",users.GetCurrentUser())
+        results = t.fetch(1)
+        for r in results:
+            r.dm_store = 'true'
+            r.put()
+        self.redirect('/home/control')
+        
+    def disableDMStore(self):
+        t = tweetapp.OAuthAccessToken.all()
+        t.filter("user =",users.GetCurrentUser())
+        results = t.fetch(1)
+        for r in results:
+            r.dm_store = 'false'
+            r.put()
+        self.redirect('/home/control')
         
     def get(self, command=None):
         user = users.GetCurrentUser()
@@ -150,7 +175,13 @@ class HomePage(webapp.RequestHandler):
                 return
 
             #TODO: only if SMS
-            if ('/control' in command):
+            if ('/control' in command and self.hasSeenSMS()):
+                if ('/dm_store' in command):
+                    self.enableDMStore()
+                    return
+                if ('/dm_destroy' in command):
+                    self.disableDMStore()
+                    return
                 if ('/enable' in command):
                     self.enableAlert()
                     return

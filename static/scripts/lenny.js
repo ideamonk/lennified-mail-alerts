@@ -9,7 +9,6 @@ $(document).ready( function(){
     $("body").click( function(){
             $(".dialog").fadeOut("fast");
     });
-
     setTimeout('step_animate()',1500);
 });
 
