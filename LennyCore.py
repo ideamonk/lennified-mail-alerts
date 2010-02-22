@@ -123,6 +123,8 @@ class OAuthReadyPage(webapp.RequestHandler):
             else:
                     self.response.out.write('no go')
 
+    def post(self):
+        self.get()
 
 # -------------------------------------------------------------------
 # DispatchQueue
@@ -143,6 +145,8 @@ class DispatchQueue(webapp.RequestHandler):
                 taskqueue.add(url='/dispatch?email=' + str(a_user.user.email()), method='GET')
                 self.response.out.write("done %s |" % str(a_user.user.email()))
                 
+    def post(self):
+        self.get()
 # -------------------------------------------------------------------
 # MessageDispatcher
 # -------------------------------------------------------------------
