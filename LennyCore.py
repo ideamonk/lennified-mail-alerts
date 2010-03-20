@@ -179,6 +179,9 @@ class Dispatcher(webapp.RequestHandler):
             self.response.out.write ('something went wrong')
             # TODO: Log it
         else:
+            if "Unauthorized" in atom.feed.subtitle:
+                return
+
             # TEST self.response.out.write (atom)
             # okay got the atom now operate
 
