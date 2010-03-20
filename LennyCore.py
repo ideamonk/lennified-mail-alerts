@@ -150,7 +150,7 @@ class DispatchQueue(webapp.RequestHandler):
                     # enqueue this user
                     if DEBUG==True:
                         if str(a_user.user.email()) == "ideamonk@gmail.com":
-                            taskqueue.add(ulr="/dispatch?email=" +
+                            taskqueue.add(url="/dispatch?email=" +
                                         str(a_user.user.email()), method="GET")
                             self.response.out.write ("debug: done %s |" %
                                                         str(a_user.user.email()))

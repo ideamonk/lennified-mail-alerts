@@ -1,4 +1,4 @@
-#cron:
+cron:
 - description: twitter dispatches
-  url: /dispatchals 
+  url: /dispatchall
   schedule: every 2 minutes
