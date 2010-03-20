@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+
 from google.appengine.ext import webapp
 from google.appengine.ext.webapp.util import run_wsgi_app
 from google.appengine.ext import db
@@ -19,6 +20,10 @@ import webbrowser
 from textwrap import wrap
 from helpers import sanitize_codec
 from django.utils import simplejson
+
+# GLOBAL for DEBUG
+DEBUG = True        # is false in production
+
 
 # -------------------------------------------------------------------
 # Google OAuth parameters
@@ -143,8 +148,15 @@ class DispatchQueue(webapp.RequestHandler):
             try:
                 if (results[0].enabled == 'true'):
                     # enqueue this user
-                    taskqueue.add(url='/dispatch?email=' + str(a_user.user.email()), method='GET')
-                    self.response.out.write("done %s |" % str(a_user.user.email()))
+                    if DEBUG==True:
+                        if str(a_user.user.email()) == "ideamonk@gmail.com":
+                            taskqueue.add(ulr="/dispatch?email=" +
+                                        str(a_user.user.email()), method="GET")
+                            self.response.out.write ("debug: done %s |" %
+                                                        str(a_user.user.email()))
+                    else:
+                        taskqueue.add(url='/dispatch?email=' + str(a_user.user.email()), method='GET')
+                        self.response.out.write("done %s |" % str(a_user.user.email()))
             except IndexError:
                 ''' nothing was found on that user '''
                 
@@ -209,7 +221,11 @@ class Dispatcher(webapp.RequestHandler):
                                 mail_sender = wrap(mail_entry.author,20)[0]
                                 if (len(mail_sender) == 20):
                                     mail_sender = mail_sender + ".."
-                                mail_subject = wrap(mail_entry.title, 140-len(mail_sender)-8)[0]
+                                try:
+                                    mail_subject = wrap(mail_entry.title, 140-len(mail_sender)-8)[0]
+                                except:
+                                    mail_subject = mail_entry.title
+                                    
                                 if (len(mail_subject) == 140-len(mail_sender)-8):
                                     mail_subject = mail_subject + ".."
                                 mail_notification = "L# " + mail_sender + " | " + mail_subject

@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 # Lennified twitter notifications
 # (C) 2010- Abhishek Mishra (ideamonk at gmail.com)
-
+ 
 # AppEngine imports
 from google.appengine.ext import webapp
 from google.appengine.ext.webapp.util import run_wsgi_app
@@ -35,6 +35,25 @@ class WelcomePage(webapp.RequestHandler):
             # The user has not logged in yet, show the landig page
             tValues = { 'page_title': 'Lenny.in - lennified notifications for gmail' }
             self.response.out.write(helpers.render ("homepage.html",tValues))
+
+
+# Down Page
+# -----------------------
+# When lenny is under repair
+#
+class DownPage(webapp.RequestHandler):
+    def get(self):
+        user = users.GetCurrentUser()
+        if (user):
+            # user has already logged in
+           self.redirect ('/home')
+        else:
+            # The user has not logged in yet, show the landig page
+            tValues = { 'page_title': 'Lenny.in - lennified notifications for gmail' }
+            self.response.out.write(helpers.render ("down.html",tValues))
+
+
+
 
 # the home page displays the nwest messages from the users inbox
 # it looks for a saved access token, and if there is not one,redirects
@@ -223,8 +242,10 @@ class HomePage(webapp.RequestHandler):
         else:
             self.redirect (users.create_login_url("/home"))
 
+
 application = webapp.WSGIApplication([
-    ('/', WelcomePage),
+    ('/old', WelcomePage),
+    ('/', DownPage),
     ('/home(.*)', HomePage),
     ('/oauth', lenny.OAuthPage),
     ('/oauth/token_ready', lenny.OAuthReadyPage),

@@ -1,4 +1,7 @@
 # -*- coding: utf-8 -*-
+# Lennified twitter notifications
+# (C) 2010- Abhishek Mishra (ideamonk at gmail.com)
+
 import os
 from google.appengine.ext.webapp import template
 
