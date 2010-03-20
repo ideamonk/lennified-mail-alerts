@@ -170,6 +170,10 @@ class Dispatcher(webapp.RequestHandler):
     def get(self):
         user = users.User(email = self.request.get('email'))
         atom = get_feed(user)
+
+        if DEBUG==True:
+            self.response.our.write(atom)
+
         if not atom:
             ''' Something went wrong here '''
             self.response.out.write ('something went wrong')
