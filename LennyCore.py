@@ -172,7 +172,7 @@ class Dispatcher(webapp.RequestHandler):
         atom = get_feed(user)
 
         if DEBUG==True:
-            self.response.our.write(atom)
+            self.response.out.write(atom)
 
         if not atom:
             ''' Something went wrong here '''
