@@ -244,8 +244,8 @@ class HomePage(webapp.RequestHandler):
 
 
 application = webapp.WSGIApplication([
-    ('/old', WelcomePage),
-    ('/', DownPage),
+    ('/', WelcomePage),
+    #('/', DownPage),
     ('/home(.*)', HomePage),
     ('/oauth', lenny.OAuthPage),
     ('/oauth/token_ready', lenny.OAuthReadyPage),
