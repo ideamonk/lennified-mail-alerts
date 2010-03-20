@@ -22,7 +22,7 @@ from helpers import sanitize_codec
 from django.utils import simplejson
 
 # GLOBAL for DEBUG
-DEBUG = True        # is false in production
+DEBUG = False        # is false in production
 
 
 # -------------------------------------------------------------------
