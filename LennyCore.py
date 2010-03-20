@@ -207,7 +207,8 @@ class Dispatcher(webapp.RequestHandler):
                     t = tweetapp.OAuthAccessToken.all()
                     t.filter ("user =", user)
                     tresults = t.fetch(1)
-                    
+                    response_client = None
+
                     for entry in tresults:
                         t_key = entry.oauth_token
                         t_secret = entry.oauth_token_secret
@@ -223,7 +224,7 @@ class Dispatcher(webapp.RequestHandler):
                         if (mail_tstamp > last_tstamp):
                             # TEST:self.response.out.write(mail_entry.title)
                             # DM this message
-                            if (response_client):
+                            if (response_client != None):
                                 # send a DM
                                 mail_sender = wrap(mail_entry.author,20)[0]
                                 if (len(mail_sender) == 20):
