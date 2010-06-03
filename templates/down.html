@@ -1,0 +1,49 @@
+{% extends 'base.html' %}
+
+{% block border %}left-border{% endblock %}
+
+{% block right %}
+    <div class='birdy'>
+        <h3 class='GoodDog'>But...</h3>
+        <p>
+            You can still register/access your account here
+        </p>
+        <p class='paddify'>
+            <a href='/home'>
+                <div id="start_button">&nbsp;</div>
+            </a>
+        </p>
+    </div>
+{% endblock %}
+
+{% block left %}
+    <img  class='lennylogo' align='left' src='/static/images/lenny_smaller.png' alt='Lenny, the toy from movie Toy Story which looks like a pair of glasses' />
+
+    <div style='height:20px;'>&nbsp;</div>
+
+    <h2 class='GoodDog'>Lenny.in</h2>
+    <p class='tagline'>
+        Lennified gmail notifications on twitter
+    </p>
+
+    <div style='clear:both;'>&nbsp;</div>
+
+    <h3 class='GoodDog'>What is Lenny?</h3>
+    <p>
+        Lenny is a simple gmail notification tool.
+        If your twitter account is sms <img src='/static/images/telephone.png' align='top'/> enabled, it alerts you whenever you get a new mail <img src='/static/images/email.png' align='top'/> in your inbox.
+    </p>
+    <br/>
+    <p style='color:red; background: #ffffff;padding:10px;'>
+        Lenny is under repair work, will be back shortly. Account access is still functional but updates would be broken for a while. Wait for another great update! Thanks for your co-operation and using Lenny.<br/>
+        <span style='width:70%;display:inline-block;'>&nbsp;</span>-- Abhishek
+    </p>
+    <br/>
+    <div class='working'>
+        <img src='/static/images/working.png' />
+    </div>
+    <div style='height:20px;'>&nbsp;</div>
+{% endblock %}
+
+{% block topmenu %}{% endblock %}
+{% block logosmall %}{% endblock %}
