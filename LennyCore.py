@@ -219,6 +219,8 @@ class Dispatcher(webapp.RequestHandler):
                     for i in xrange(len(atom.entries)):
                         # mail_date = atom.entries[i].updated_parsed
                         mail_entry = atom.entries[i]
+                        if ('author' in  mail_entry.keys()):
+                            continue
                         mail_tstamp = datetime.strptime ("%d-%d-%dT%d:%d:%dZ" % mail_entry.published_parsed[:6], "%Y-%m-%dT%H:%M:%SZ")
                         mail_strstamp = "%d-%d-%dT%d:%d:%dZ" % mail_entry.published_parsed[:6]
                         if (mail_tstamp > last_tstamp):
