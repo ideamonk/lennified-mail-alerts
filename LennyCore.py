@@ -199,9 +199,8 @@ class Dispatcher(webapp.RequestHandler):
                 except TypeError:
                     last_tstamp = datetime.strptime ("2000-2-3T12:34:34Z", "%Y-%m-%dT%H:%M:%SZ")
 
-                if (last_tstamp < current_tstamp):
+                if last_tstamp < current_tstamp:
                     # something new has come up, loop over and send em all
-
                     # Prepare a twitter oauthed client
                     service_info = tweetapp.OAUTH_APP_SETTINGS['twitter']
                     t = tweetapp.OAuthAccessToken.all()
@@ -219,31 +218,30 @@ class Dispatcher(webapp.RequestHandler):
                     for i in xrange(len(atom.entries)):
                         # mail_date = atom.entries[i].updated_parsed
                         mail_entry = atom.entries[i]
-                        if ('author' in  mail_entry.keys()):
+                        if not ('author' in  mail_entry):
                             continue
                         mail_tstamp = datetime.strptime ("%d-%d-%dT%d:%d:%dZ" % mail_entry.published_parsed[:6], "%Y-%m-%dT%H:%M:%SZ")
                         mail_strstamp = "%d-%d-%dT%d:%d:%dZ" % mail_entry.published_parsed[:6]
-                        if (mail_tstamp > last_tstamp):
+                        if mail_tstamp > last_tstamp:
                             # TEST:self.response.out.write(mail_entry.title)
                             # DM this message
-                            if (response_client != None):
+                            if response_client != None:
                                 # send a DM
                                 mail_sender = wrap(mail_entry.author,20)[0]
-                                if (len(mail_sender) == 20):
+                                if len(mail_sender) == 20:
                                     mail_sender = mail_sender + ".."
                                 try:
                                     mail_subject = wrap(mail_entry.title, 140-len(mail_sender)-8)[0]
                                 except:
                                     mail_subject = mail_entry.title
-                                    
+                                 
                                 if (len(mail_subject) == 140-len(mail_sender)-8):
                                     mail_subject = mail_subject + ".."
                                 mail_notification = "L# " + mail_sender + " | " + mail_subject
-                                twitter_params = {'user':twitter_user, 'text':mail_notification}
+                                twitter_params = {'screen_name':twitter_user, 'text':mail_notification}
                                 # get rid of ascii codec shite
                                 twitter_params = sanitize_codec(twitter_params, 'utf-8')
                                 content = response_client.oauth_request('https://api.twitter.com/1/direct_messages/new.json', twitter_params, method='POST')
-
                                 # delete the last DM to avoid cluttering
                                 if (twitter_dm == 'false'):
                                     try:
